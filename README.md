@@ -1,6 +1,9 @@
 # CPEN455 Project: Conditional PixelCNN++
 This project is for CPEN 455 course project. **The goal of this project is to implement the Conditional PixelCNN++ model and train it on the given dataset.** After that, the model can both generate new images and classify the given images. **we would evaluate the model based on both the generation performance and classification performance.**
 
+## Requirements for the submission
+
+we provided 2 python files in this repo, **classification_evaluation.py** and **generation_evaluation.py**. You need to fill in the contents of the function in them and guarantee that the code can run without any errors. **whether the code can run successfully will be the first criterion for grading.**
 
 
 ## Guidelines
@@ -80,11 +83,3 @@ For classification accuracy, we evaluate using both **accuracy** and **F1 score*
 For assessing the quality of generated images, we provided an evaluation interface function using the **FID score** to gauge the quality. After the final project deadline, we will run all submitted code on our system and execute the FID evaluation function. It is essential to ensure that your code runs correctly and can reproduce the evaluation results reported in the project. Failure to do so may result in corresponding deductions.
 
 **Please DO NOT from attempting to hack our test dataset in any way. We will attempt to reproduce the results for all submitted code, and any cheating discovered will result in deductions and appropriate actions taken.**
-
-## Datasets
-
-
-
-## Requirements for the submission
-
-we provided 2 python files in this repo, **classification_evaluation.py** and **generation_evaluation.py**. You need to fill in the contents of the function in them and guarantee that the code can run without any errors. **whether the code can run successfully will be the first criterion for grading.**
