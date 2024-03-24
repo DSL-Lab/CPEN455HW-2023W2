@@ -55,7 +55,7 @@ conda install pip3
 ```
 when you type the command `which pip3`, you should see the path of the pip3 in the virtual environment but not in the system pip3 path.
 
-if you make sure the pip3 is in the virtual environment, you can install pytorch via this touorial: https://pytorch.org/get-started/locally/, you should choose the right version of command according to your system, for example, if you use linux with cuda support, you should use the following command:
+if you make sure the pip3 is in the virtual environment, you can install pytorch via this touorial: https://pytorch.org/get-started/locally/, you should choose the right version of command according to your system. For example, if you use linux with cuda support, you should use the following command:
 ```
 pip3 install torch torchvision torchaudio
 ```
