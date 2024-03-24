@@ -13,7 +13,7 @@ $CONDA_PATH/envs/pcnn/bin/python pcnn_train.py \
 $CONDA_PATH/envs/pcnn/bin/python pcnn_train.py \
 --batch_size 32 \
 --sample_batch_size 32 \
---sampling_interval 50 \
+--sampling_interval 25 \
 --save_interval 50 \
 --dataset cpen455 \
 --nr_resnet 1 \
