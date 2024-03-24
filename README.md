@@ -30,7 +30,7 @@ In this case, with a trained conditional PixelCNN++, we could directly apply it 
 * Complete a classification function in `classification_evaluation.py` to convert the output of conditional PixelCNN++ to the prediction labels when given a new image.
   * Replace the random classifier with your trained model.(line 64-68)
   * modify the get_label function to get the predicted label.(line 18-24)
-* Please DO NOT change any other definitions in the two interface `generation_evaluation.py` and `classification_evaluation.py`. All you can modify is within "begin of your code" and "end of your code".
+* Please DO NOT change any other definitions in the two interface `generation_evaluation.py` and `classification_evaluation.py`. All you can modify is within "begin of your code" and "end of your code". As for other parts of this repo, you can modify them arbitrarily.
 
   
 
