@@ -1,6 +1,6 @@
 # CPEN455 2023 W2 Course Project: Conditional PixelCNN++ for Image Classification
 
-This project is for CPEN 455 course project 2023 Winter Term 2 at UBC. **The goal of this project is to implement the Conditional PixelCNN++ model and train it on the given dataset.** After that, the model can both generate new images and classify the given images. **we would evaluate the model based on both the generation performance and classification performance.**
+This repo is for CPEN 455 course project 2023 Winter Term 2 at UBC. **The goal of this project is to implement the Conditional PixelCNN++ model and train it on the given dataset.** After that, the model can both generate new images and classify the given images. **we would evaluate the model based on both the generation performance and classification performance.**
 
 
 
@@ -49,6 +49,18 @@ We TAs recommend several tools which will help you debug and monitor the trainin
 ## Original PixelCNN++ code
 we provided the code for the PixelCNN++ model. Before you run the code, you need to install the required packages by running the following command:
 ```
+conda create -n cpen455 python=3.10.13
+conda activate cpen455
+conda install pip3
+```
+when you type the command `which pip3`, you should see the path of the pip3 in the virtual environment but not in the system pip3 path.
+
+if you make sure the pip3 is in the virtual environment, you can install pytorch via this touorial: https://pytorch.org/get-started/locally/, you should choose the right version of command according to your system, for example, if you use linux with cuda support, you should use the following command:
+```
+pip3 install torch torchvision torchaudio
+```
+After you install the pytorch, you can install the other required packages by running the following command:
+```
 pip install -r requirements.txt
 ```
 
@@ -57,14 +69,14 @@ Please note that we guarantee that the requirements.txt file includes all the Py
 And then, you can run the code by running the following command:
 ```
 python pcnn_train.py \
---batch_size 32 \
---sample_batch_size 32 \
---sampling_interval 50 \
---save_interval 1000 \
+--batch_size 16 \
+--sample_batch_size 16 \
+--sampling_interval 25 \
+--save_interval 25 \
 --dataset cpen455 \
---nr_resnet 2 \
+--nr_resnet 1 \
 --lr_decay 0.999995 \
---max_epochs 5000 \
+--max_epochs 500 \
 --en_wandb True \
 ```
 
