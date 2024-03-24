@@ -8,7 +8,7 @@ This project is for CPEN 455 course project 2023 Winter Term 2 at UBC. **The goa
 
 PixelCNN++ is a powerful generative model with tractable likelihood. It models the joint distribution of pixels over an image x as the following product of conditional distributions.
 
-<img src="https://cdn-uploads.huggingface.co/production/uploads/65000e786a230e55a65c45ad/s6WVGcuEHhc-6CSiE-Qbg.png" width = "500" align="center"/>
+<img src="https://cdn-uploads.huggingface.co/production/uploads/65000e786a230e55a65c45ad/-jZg8HEMyFnpduNsi-Alt.png" width = "500" align="center"/>
 
 where x_i is a single pixel.
 
