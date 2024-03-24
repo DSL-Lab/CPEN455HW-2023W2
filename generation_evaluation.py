@@ -7,6 +7,9 @@ We provide the remaining code,  you can't modify the remaining code, all you sho
 2. Modify how you call your sample function(line 31)
 '''
 from pytorch_fid.fid_score import calculate_fid_given_paths
+from utils import *
+from model import * 
+from dataset import *
 import os
 import torch
 # You should modify this sample function to get the generated images from the model
