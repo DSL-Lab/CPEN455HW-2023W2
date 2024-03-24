@@ -72,8 +72,8 @@ if __name__ == '__main__':
         # Resize((32, 32)),  # Resize images to 32 * 32
         rescaling
     ])
-    # dataset_list = ['train', 'test_hidden', 'validation', 'test']
-    dataset_list = ['test_hidden']
+    dataset_list = ['train', 'validation', 'test']
+    
     for mode in dataset_list:
         print(f"Mode: {mode}")
         dataset = CPEN455Dataset(root_dir='./data', transform=transform_32, mode=mode)
