@@ -11,6 +11,7 @@ from dataset import *
 from tqdm import tqdm
 from pprint import pprint
 import argparse
+from pytorch_fid.fid_score import calculate_fid_given_paths
 
 
 def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, mode = 'training'):
@@ -53,6 +54,8 @@ if __name__ == '__main__':
                         default='data', help='Location for the dataset')
     parser.add_argument('-o', '--save_dir', type=str, default='models',
                         help='Location for parameter checkpoints and samples')
+    parser.add_argument('-sd', '--sample_dir',  type=str, default='samples',
+                        help='Location for saving samples')
     parser.add_argument('-d', '--dataset', type=str,
                         default='cpen455', help='Can be either cifar|mnist|cpen455')
     parser.add_argument('-st', '--save_interval', type=int, default=10,
@@ -215,15 +218,26 @@ if __name__ == '__main__':
                       epoch = epoch,
                       mode = 'val')
         
-        if (epoch + 1) % args.save_interval == 0: 
-            if not os.path.exists("models"):
-                os.makedirs("models")
-            torch.save(model.state_dict(), 'models/{}_{}.pth'.format(model_name, epoch))
-        
         if epoch % args.sampling_interval == 0:
             print('......sampling......')
             sample_t = sample(model, args.sample_batch_size, args.obs, sample_op)
             sample_t = rescaling_inv(sample_t)
+            save_images(sample_t, args.sample_dir)
             sample_result = wandb.Image(sample_t, caption="epoch {}".format(epoch))
+            
+            gen_data_dir = args.sample_dir
+            ref_data_dir = args.data_dir +'/test'
+            paths = [gen_data_dir, ref_data_dir]
+            try:
+                fid_score = calculate_fid_given_paths(paths, 32, device, dims=192)
+            except:
+                print("Dimension {:d} fails!".format(192))
+                
             if args.en_wandb:
-                wandb.log({"samples": sample_result})
+                wandb.log({"samples": sample_result,
+                            "FID": fid_score})
+        
+        if (epoch + 1) % args.save_interval == 0: 
+            if not os.path.exists("models"):
+                os.makedirs("models")
+            torch.save(model.state_dict(), 'models/{}_{}.pth'.format(model_name, epoch))

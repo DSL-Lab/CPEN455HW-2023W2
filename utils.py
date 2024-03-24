@@ -6,6 +6,7 @@ from torch.autograd import Variable
 from torch.nn.utils import weight_norm as wn
 import numpy as np
 import os
+from PIL import Image
 
 
 def concat_elu(x):
@@ -214,3 +215,10 @@ class ratio_tracker:
 def check_dir_and_create(dir):
     if not os.path.exists(dir):
         os.makedirs(dir, exist_ok=True)
+        
+def save_images(tensor, images_folder_path):
+    os.makedirs(images_folder_path, exist_ok=True)
+    for i, img_tensor in enumerate(tensor):
+        img = Image.fromarray(img_tensor.cpu().numpy().transpose(1, 2, 0), mode='RGB')
+        img_path = f"{images_folder_path}/image_{i+1:02d}.jpg"
+        img.save(img_path)
