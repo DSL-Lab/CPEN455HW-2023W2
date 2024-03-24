@@ -70,7 +70,7 @@ And there are some repositories that implement the PixelCNN++ model. You can fin
 
 2.Pytorch implementation of PixelCNN++: https://github.com/pclucas14/pixel-cnn-pp
 
-# Dataset Description
+# Dataset
 
 In our provided code base, we have included the data required to train conditional PixelCNN++. The directory structure is as follows:
 ```
