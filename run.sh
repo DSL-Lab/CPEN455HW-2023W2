@@ -1,4 +1,4 @@
-$CONDA_PATH/envs/pcnn/bin/python pcnn_train.py \
+python pcnn_train.py \
 --batch_size 16 \
 --sample_batch_size 16 \
 --sampling_interval 50 \
