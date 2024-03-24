@@ -21,10 +21,16 @@ In this case, with a trained conditional PixelCNN++, we could directly apply it 
 <img src="https://cdn-uploads.huggingface.co/production/uploads/65000e786a230e55a65c45ad/0SDnZ2Y8wNe8HD_c5mZvC.png" width = "260" align="center"/>
 
 **Task:** For our final project, you are required to achieve the following tasks
+* We will provide you with codes for an unconditional PixelCNN++. You need to adapt it to conditional image generation task and train it on our provided database.
+  
+* Complete `generation_evaluation.py` to conditionally generate images and evaluate the generated images using FID score.
+  * Modify the sample function to get the generated images from the model and ensure the generated images are saved to the gen_data_dir(line 12-18)
+  * Modify how you call your sample function(line 31)
 
-* We will provide you with codes for an unconditional PixelCNN++. You need to adapt it to the conditional image generation task and train it on our provided database.
-
-* You are required to complete a classification function to convert the output of conditional PixelCNN++ to the prediction labels when given a new image. 
+* Complete a classification function in `classification_evaluation.py` to convert the output of conditional PixelCNN++ to the prediction labels when given a new image.
+  * Replace the random classifier with your trained model.(line 64-68)
+  * modify the get_label function to get the predicted label.(line 18-24)
+* Please DO NOT change any definitions in the two interface classes `generation_evaluation.py` and `classification_evaluation.py`.
 
   
 
@@ -103,7 +109,7 @@ For the evaluation of model performance, we assess the quality of images generat
 
 For classification accuracy, we evaluate using both **accuracy** and **F1 score**. You can submit your classification results through the [project Hugging Face challenge page](https://huggingface.co/spaces/CPEN455-23W2/CPEN45523W2CourseProject). Please see the Submission Guidelines tab. Our system will calculate accuracy and F1 score based on your submission and then update the leaderboard accordingly.
 
-For assessing the quality of generated images, we provided an evaluation interface function using the **FID score** to gauge the quality. After the final project deadline, we will run all submitted code on our system and execute the FID evaluation function. It is essential to ensure that your code runs correctly and can reproduce the evaluation results reported in the project. Failure to do so may result in corresponding deductions.
+For assessing the quality of generated images, we provided an evaluation interface function in `generation_evaluation.py` using the **FID score** to gauge the quality. After the final project deadline, we will run all submitted code on our system and execute the FID evaluation function. It is essential to ensure that your code runs correctly and can reproduce the evaluation results reported in the project. Failure to do so may result in corresponding deductions.
 
 Evaluation of model performance will affect a portion of the final score, but not all of it. After deadlines, we will attempt to reproduce all submitted code, and any cheating discovered will result in deductions and appropriate actions taken. The quality of the code, the completeness of the project, and the ability to reproduce results will all be considered in determining the final score.
 
