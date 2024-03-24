@@ -6,19 +6,19 @@ This project is for CPEN 455 course project 2023 Winter Term 2 at UBC. **The goa
 
 ## Project Guidelines
 
-PixelCNN++ is a powerful generative model with tractable likelihood. It models the joint distribution of pixels over an image $x$ as the following product of conditional distributions.
+PixelCNN++ is a powerful generative model with tractable likelihood. It models the joint distribution of pixels over an image x as the following product of conditional distributions.
 
-<img src="https://cdn-uploads.huggingface.co/production/uploads/65000e786a230e55a65c45ad/hCND1EbbwWaI0PcYsBTco.png" width = "500" align="center"/>
+<img src="https://cdn-uploads.huggingface.co/production/uploads/65000e786a230e55a65c45ad/s6WVGcuEHhc-6CSiE-Qbg.png" width = "500" align="center"/>
 
-where $x_i$ is a single pixel.
+where x_i is a single pixel.
 
-Given a class embedding $c$, PixelCNN++ can be extended to conditional generative tasks following:
+Given a class embedding c, PixelCNN++ can be extended to conditional generative tasks following:
 
-<img src="https://cdn-uploads.huggingface.co/production/uploads/65000e786a230e55a65c45ad/jBq9uxLg9PXFNpTU-l-uK.png" width = "260" align="center"/>
+<img src="https://cdn-uploads.huggingface.co/production/uploads/65000e786a230e55a65c45ad/_jv7O2Z_1s1oYLXjIqS1V.png" width = "260" align="center"/>
 
 In this case, with a trained conditional PixelCNN++, we could directly apply it to the zero-shot image classification task by:
 
-<img src="https://cdn-uploads.huggingface.co/production/uploads/65000e786a230e55a65c45ad/0SDnZ2Y8wNe8HD_c5mZvC.png" width = "260" align="center"/>
+<img src="https://cdn-uploads.huggingface.co/production/uploads/65000e786a230e55a65c45ad/DkKS0zI5FZ6wpw0WZtdSD.png" width = "260" align="center"/>
 
 **Task:** For our final project, you are required to achieve the following tasks
 * We will provide you with codes for an unconditional PixelCNN++. You need to adapt it to conditional image generation task and train it on our provided database.
