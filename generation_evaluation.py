@@ -11,7 +11,7 @@ import os
 import torch
 # You should modify this sample function to get the generated images from the model
 # This function should save the generated images to the gen_data_dir, 
-# which is fixed as 'samples/class0', 'samples/class1', 'samples/class2', 'samples/class3'
+# which is fixed as 'samples/Class0', 'samples/Class1', 'samples/Class2', 'samples/Class3'
 # Begin of your code
 def sample():
     pass
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     BATCH_SIZE=128
     device = "cuda" if torch.cuda.is_available() else "cpu"
     
-    gen_data_dir_list = ["samples/class0", "samples/class1", "samples/class2", "samples/class3"]
+    gen_data_dir_list = ["samples/Class0", "samples/Class1", "samples/Class2", "samples/Class3"]
     fid_score_average = 0
     for gen_data_dir in gen_data_dir_list:
         if not os.path.exists(gen_data_dir):
