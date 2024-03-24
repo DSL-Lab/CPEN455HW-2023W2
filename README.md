@@ -80,7 +80,7 @@ python pcnn_train.py \
 --en_wandb True \
 ```
 
-If you want to go into more detail about Pixelcnn++, you can find the original paper at the following link: https://arxiv.org/abs/1701.05517
+If you want to go into more details about Pixelcnn++, you can find the original paper at the following link: https://arxiv.org/abs/1701.05517
 
 And there are some repositories that implement the PixelCNN++ model. You can find them in the following link:
 
