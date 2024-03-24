@@ -1,32 +1,28 @@
 # CPEN455 Project: Conditional PixelCNN++
+
 This project is for CPEN 455 course project. **The goal of this project is to implement the Conditional PixelCNN++ model and train it on the given dataset.** After that, the model can both generate new images and classify the given images. **we would evaluate the model based on both the generation performance and classification performance.**
 
-## Requirements for the submission
-
-we provided 2 python files in this repo, **classification_evaluation.py** and **generation_evaluation.py**. You need to fill in the contents of the function in them and guarantee that the code can run without any errors. **whether the code can run successfully will be the first criterion for grading.**
 
 
-## Guidelines
+## Project Guidelines
 
 PixelCNN++ is a powerful generative model with tractable likelihood. It models the joint distribution of pixels over an image $x$ as the following product of conditional distributions.
 
-```math
-p_\theta(x) = \prod_{i=1}^n p_\theta(x_i | x_1, X_2, \dots, x_{i-1}) = \prod_{i=1}^n p_\theta(x_i|x_{<i})
-```
+<img src="https://cdn-uploads.huggingface.co/production/uploads/65000e786a230e55a65c45ad/hCND1EbbwWaI0PcYsBTco.png" width = "500" align="center"/>
 
-where $x_i$  is a single pixel.
+where $x_i$ is a single pixel.
 
 Given a class embedding $c$, PixelCNN++ can be extended to conditional generative tasks following:
 
-$$p_\theta(x|c)=\prod_{i=1}^n p_\theta(x_i | x_{<i}, c)$$
+<img src="https://cdn-uploads.huggingface.co/production/uploads/65000e786a230e55a65c45ad/jBq9uxLg9PXFNpTU-l-uK.png" width = "260" align="center"/>
 
 In this case, with a trained conditional PixelCNN++, we could directly apply it to the zero-shot image classification task by:
 
-$$p(c|x)=\frac{p_\theta(x|c) \times p(c)}{\sum_{i=1}^n p(x|c)p(c)}$$
+<img src="https://cdn-uploads.huggingface.co/production/uploads/65000e786a230e55a65c45ad/0SDnZ2Y8wNe8HD_c5mZvC.png" width = "260" align="center"/>
 
 **Task:** For our final project, you are required to achieve the following tasks
 
-* We will provide you with codes for an unconditional PixelCNN++. You adapt it to conditional image generation task and train it on our provided database.
+* We will provide you with codes for an unconditional PixelCNN++. You need to adapt it to conditional image generation task and train it on our provided database.
 
 * You are required to complete a classification function to convert the output of conditional PixelCNN++ to the prediction labels when given a new image. 
 
@@ -50,19 +46,19 @@ we provided the code for the PixelCNN++ model. Before you run the code, you need
 pip install -r requirements.txt
 ```
 
-Please note that we guarantee that the requirements.txt file includes all the Python packages necessary to complete the final project. Therefore, **please DO NOT from installing any third-party packages.** If this results in the inability to run the submitted code later on, you may need to take responsibility and face the consequences. If you have any questions regarding Python packages, please contact the teaching assistant.
+Please note that we guarantee that the requirements.txt file includes all the Python packages necessary to complete the final project. Therefore, **please DO NOT install any third-party packages.** If this results in the inability to run the submitted code later on, you may need to take responsibility. If you have any questions regarding Python packages, please contact the teaching assistant.
 
 And then, you can run the code by running the following command:
 ```
-$CONDA_PATH/envs/pcnn/bin/python pcnn_train.py \
---batch_size 16 \
---sample_batch_size 16 \
+python pcnn_train.py \
+--batch_size 32 \
+--sample_batch_size 32 \
 --sampling_interval 50 \
---save_interval 50 \
+--save_interval 1000 \
 --dataset cpen455 \
---nr_resnet 1 \
+--nr_resnet 2 \
 --lr_decay 0.999995 \
---max_epochs 500 \
+--max_epochs 5000 \
 --en_wandb True \
 ```
 
@@ -74,12 +70,58 @@ And there are some repositories that implement the PixelCNN++ model. You can fin
 
 2.Pytorch implementation of PixelCNN++: https://github.com/pclucas14/pixel-cnn-pp
 
+# Dataset Description
+
+In our provided code base, we have included the data required to train conditional PixelCNN++. The directory structure is as follows:
+```
+data
+├── test
+├── train
+└── validation
+```
+
+Among them, the `train` directory contains 4160 labeled training images, divided into 4 different categories. The `validation` directory contains 520 labeled validation images. The `test` directory contains 520 unlabeled testing images used for evaluating model performance.
+
+
+The ground truth labels for the training set and validation set are stored in the `data/train.csv` and `data/validation.csv` respectively. These two `.csv` files contain two columns: `id` and `label`, as shown below:
+
+```
+id, label
+0000000.jpg,1
+0000001.jpg,0
+0000002.jpg,3
+0000003.jpg,1
+0000005.jpg,3
+0000006.jpg,3
+0000007.jpg,2
+0000008.jpg,0
+```
+
 ## Evaluation
 
-For the evaluation of model performance, we assessed the quality of images generated by conditional PixelCNN++ and the accuracy of classification separately. 
+For the evaluation of model performance, we assess the quality of images generated by conditional PixelCNN++ and the accuracy of classification separately. 
 
 For classification accuracy, we evaluate using both **accuracy** and **F1 score**. You can submit your classification results through the project Hugging Face challenge page. Our system will calculate accuracy and F1 score based on your submission, and then update the leaderboard accordingly.
 
 For assessing the quality of generated images, we provided an evaluation interface function using the **FID score** to gauge the quality. After the final project deadline, we will run all submitted code on our system and execute the FID evaluation function. It is essential to ensure that your code runs correctly and can reproduce the evaluation results reported in the project. Failure to do so may result in corresponding deductions.
 
-**Please DO NOT from attempting to hack our test dataset in any way. We will attempt to reproduce the results for all submitted code, and any cheating discovered will result in deductions and appropriate actions taken.**
+Evaluation of model performance will affect a portion of the final score, but not all of it. After deadlines, we will attempt to reproduce all submitted code, and any cheating discovered will result in deductions and appropriate actions taken. The quality of the code, completeness of the project, and the ability to reproduce results will all be considered in determining the final score.
+
+## Academic Integrity Guidelines for the Course Project:
+
+In developing your model, you are permitted to utilize any functions available in PyTorch and to consult external resources. However, it is imperative to properly acknowledge all sources and prior work utilized.
+
+Violations of academic integrity will result in a grade of ZERO. These violations include:
+
+1. Extensive reuse or adaptation of existing methods or code bases without proper citation in both your report and code.
+2. Use of tools like ChatGPT or Copilot for code generation without proper acknowledgment, including details of prompt-response interactions.
+3. Deliberate attempts to manipulate the testing dataset in order to extract ground-truth labels or employ discriminative classifiers.
+4. Intentional submission of fabricated results to the competition leaderboard.
+5. Any form of academic dishonesty, such as sharing code, model checkpoints, or inference results with other students.
+
+Additionally, we request the following:
+
+1. Retain both the logits and the final discrete labels from your classification results. While logits are not used for evaluation, they may be requested during investigations of academic integrity.
+2. Refrain from distributing any outputs generated by your model, including, but not limited to, images or inferred probabilities from provided datasets.
+
+Adhering to these guidelines is crucial for maintaining a fair and honest academic environment. Thank you for your cooperation.
