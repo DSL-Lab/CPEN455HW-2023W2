@@ -1,4 +1,4 @@
-# 2023 W2 CPEN455 Project: Conditional PixelCNN++
+# CPEN455 2023 W2 Course Project: Conditional PixelCNN++ for Image Classification
 
 This project is for CPEN 455 course project 2023 Winter Term 2 at UBC. **The goal of this project is to implement the Conditional PixelCNN++ model and train it on the given dataset.** After that, the model can both generate new images and classify the given images. **we would evaluate the model based on both the generation performance and classification performance.**
 
