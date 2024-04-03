@@ -18,7 +18,7 @@ Given a class embedding c, PixelCNN++ can be extended to conditional generative 
 
 In this case, with a trained conditional PixelCNN++, we could directly apply it to the zero-shot image classification task by:
 
-<img src="https://cdn-uploads.huggingface.co/production/uploads/65000e786a230e55a65c45ad/P4co1MxbW8tmhgYwBNOxk.png" width = "260" align="center"/>
+<img src="https://cdn-uploads.huggingface.co/production/uploads/65000e786a230e55a65c45ad/P4co1MxbW8tmhgYwBNOxk.png" width = "350" align="center"/>
 
 **Task:** For our final project, you are required to achieve the following tasks
 * We will provide you with codes for an unconditional PixelCNN++. You need to adapt it to conditional image generation task and train it on our provided database.
