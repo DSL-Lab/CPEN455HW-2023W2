@@ -125,6 +125,42 @@ For assessing the quality of generated images, we provided an evaluation interfa
 
 Evaluation of model performance will affect a portion of the final score, but not all of it. After deadlines, we will attempt to reproduce all submitted code, and any cheating discovered will result in deductions and appropriate actions taken. The quality of the code, the completeness of the project, and the ability to reproduce results will all be considered in determining the final score.
 
+## Final project report guidlines
+Students are required to work on projects individually. All reports must be formatted according to the NeurIPS conference style and submitted in PDF format. When combining the report with source code and additional results, the submission on Canvas portal should be in a zip file format.
+
+
+### Paper Length and Structure:
+
++ The paper should not exceed 4 pages, excluding references or appendices.
++ A lengthy report does not equate to a good report. Don't concern yourself with the length; instead, focus on the coding and consider the report as a technical companion to your code and ideas. We do not award extra points for, nor penalize, the length of the report, whether it be long or short.
++ We recommend organizing the report in a three-section format: Model, Experiments, and Conclusion.
++ Appendices or supplemental materials may include:
+++ Source code and results from Huggingface submissions, packaged in a zip file with the PDF report. 
+++ Experiment hyper-parameters, provided in the same PDF as the main report.
+++ Visualizations of generated images, also provided in the same PDF as the main report.
+
+### Model Presentation Tips:
+
++ Include a self-created figure illustrating the main computation graph of the model for better clarity and engagement.
++ Use equations rigorously and concisely to aid understanding.
++ An algorithm box is recommended for clarity if the method is complex and difficult to understand from text alone.
++ Provide a formal description of the models, loss functions etc.
++ Distinguish your model from others using comparative figures or tables if possible.
+### Experiments Section:
+
++ Include at least one of the following is recommended:
++ Ablation study focusing on specific design choices.
++ Information on training methods, and any special techniques used.
++ Both quantitative and qualitative analysis of experimental results.
+### Conclusion Section:
+
++ Summarize key findings and contributions of your project.
++ Discuss limitations and potential avenues for future improvements and research.
+### Receive an additional bonus:
+
++ Earn at least 10% more marks if your model outperforms the TA's baseline on the Hugging Face leaderboard (TA baseline results will be updated soon).
++ Gain 10% more marks for conducting a detailed and interesting analysis of your model or generated results.
+
 ## Academic Integrity Guidelines for the Course Project:
 
 In developing your model, you are permitted to utilize any functions available in PyTorch and to consult external resources. However, it is imperative to properly acknowledge all sources and prior work utilized.
