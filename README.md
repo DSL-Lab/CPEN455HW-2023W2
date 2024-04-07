@@ -135,9 +135,9 @@ Students are required to work on projects individually. All reports must be form
 + A lengthy report does not equate to a good report. Don't concern yourself with the length; instead, focus on the coding and consider the report as a technical companion to your code and ideas. We do not award extra points for, nor penalize, the length of the report, whether it be long or short.
 + We recommend organizing the report in a three-section format: Model, Experiments, and Conclusion.
 + Appendices or supplemental materials may include:
-++ Source code and results from Huggingface submissions, packaged in a zip file with the PDF report. 
-++ Experiment hyper-parameters, provided in the same PDF as the main report.
-++ Visualizations of generated images, also provided in the same PDF as the main report.
+  + Source code and results from Huggingface submissions, packaged in a zip file with the PDF report. 
+  + Experiment hyper-parameters, provided in the same PDF as the main report.
+  + Visualizations of generated images, also provided in the same PDF as the main report.
 
 ### Model Presentation Tips:
 
