@@ -178,7 +178,7 @@ def sample(model, sample_batch_size, obs, sample_op):
     model.train(False)
     with torch.no_grad():
         data = torch.zeros(sample_batch_size, obs[0], obs[1], obs[2])
-        data = data.cuda()
+        data = data.to(next(model.parameters()).device)
         for i in range(obs[1]):
             for j in range(obs[2]):
                 data_v = data
