@@ -69,7 +69,7 @@ def show_images(images, categories, mode:str):
 if __name__ == '__main__':
     
     transform_32 = Compose([
-        # Resize((32, 32)),  # Resize images to 32 * 32
+        Resize((32, 32)),  # Resize images to 32 * 32
         rescaling
     ])
     dataset_list = ['train', 'validation', 'test']
@@ -77,11 +77,11 @@ if __name__ == '__main__':
     for mode in dataset_list:
         print(f"Mode: {mode}")
         dataset = CPEN455Dataset(root_dir='./data', transform=transform_32, mode=mode)
-        data_loader = DataLoader(dataset, batch_size = 32, shuffle=True)
+        data_loader = DataLoader(dataset, batch_size = 4, shuffle=True)
         # Sample from the DataLoader
         for images, categories in tqdm(data_loader):
             print(images.shape, categories)
-            # images = torch.round(rescaling_inv(images) * 255).type(torch.uint8)
-            # show_images(images, categories, mode)
-            # break  # We only want to see one batch of 4 images in this example
+            images = torch.round(rescaling_inv(images) * 255).type(torch.uint8)
+            show_images(images, categories, mode)
+            break  # We only want to see one batch of 4 images in this example
         
