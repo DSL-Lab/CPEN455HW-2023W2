@@ -31,6 +31,7 @@ if __name__ == "__main__":
         if not os.path.exists(gen_data_dir):
             os.makedirs(gen_data_dir)
         #Begin of your code
+        # load your model and generate images in the gen_data_dir
         sample()
         #End of your code
         paths = [gen_data_dir, ref_data_dir]
