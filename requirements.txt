@@ -7,3 +7,4 @@ pillow
 pytorch-fid
 scipy
 tqdm
+wandb
