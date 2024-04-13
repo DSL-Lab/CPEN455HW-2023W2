@@ -220,6 +220,6 @@ def check_dir_and_create(dir):
 def save_images(tensor, images_folder_path):
     os.makedirs(images_folder_path, exist_ok=True)
     for i, img_tensor in enumerate(tensor):
-        img = Image.fromarray(img_tensor.cpu().numpy().transpose(1, 2, 0), mode='RGB')
+        img = Image.fromarray((img_tensor.cpu().numpy().transpose(1, 2, 0) * 255).astype(np.uint8), mode='RGB')
         img_path = f"{images_folder_path}/image_{i+1:02d}.jpg"
         img.save(img_path)
