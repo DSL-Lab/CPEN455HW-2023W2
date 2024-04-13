@@ -12,39 +12,43 @@ from model import *
 from dataset import *
 import os
 import torch
-# You should modify this sample function to get the generated images from the model
-# This function should save the generated images to the gen_data_dir, 
-# which is fixed as 'samples/Class0', 'samples/Class1', 'samples/Class2', 'samples/Class3'
+# You should modify this sample function to get the generated images from your model
+# This function should save the generated images to the gen_data_dir, which is fixed as 'samples'
 # Begin of your code
-def sample():
+sample_op = lambda x : sample_from_discretized_mix_logistic(x, 5)
+def my_sample(model, gen_data_dir, sample_batch_size = 25, obs = (3,32,32), sample_op = sample_op):
+    for label in my_bidict:
+        print(f"Label: {label}")
+        #generate images for each label, each label has 25 images
+        sample_t = sample(model, sample_batch_size, obs, sample_op)
+        sample_t = rescaling_inv(sample_t)
+        save_images(sample_t, os.path.join(gen_data_dir), label=label)
     pass
 # End of your code
 
 if __name__ == "__main__":
     ref_data_dir = "data/test"
+    gen_data_dir = "samples"
     BATCH_SIZE=128
     device = "cuda" if torch.cuda.is_available() else "cpu"
     
-    gen_data_dir_list = ["samples/Class0", "samples/Class1", "samples/Class2", "samples/Class3"]
-    fid_score_average = 0
-    for gen_data_dir in gen_data_dir_list:
-        if not os.path.exists(gen_data_dir):
-            os.makedirs(gen_data_dir)
-        #Begin of your code
-        # load your model and generate images in the gen_data_dir
-        sample()
-        #End of your code
-        paths = [gen_data_dir, ref_data_dir]
-        print("#generated images: {:d}, #reference images: {:d}".format(
-            len(os.listdir(gen_data_dir)), len(os.listdir(ref_data_dir))))
+    if not os.path.exists(gen_data_dir):
+        os.makedirs(gen_data_dir)
+    #Begin of your code
+    #Load your model and generate images in the gen_data_dir
+    model = PixelCNN(nr_resnet=1, nr_filters=40, input_channels=3, nr_logistic_mix=5)
+    model = model.to(device)
+    model = model.eval()
+    my_sample(model=model, gen_data_dir=gen_data_dir)
+    #End of your code
+    paths = [gen_data_dir, ref_data_dir]
+    print("#generated images: {:d}, #reference images: {:d}".format(
+        len(os.listdir(gen_data_dir)), len(os.listdir(ref_data_dir))))
 
-        try:
-            fid_score = calculate_fid_given_paths(paths, BATCH_SIZE, device, dims=192)
-            print("Dimension {:d} works! fid score: {}".format(192, fid_score, gen_data_dir_list))
-        except:
-            print("Dimension {:d} fails!".format(192))
-            
-        fid_score_average = fid_score_average + fid_score
+    try:
+        fid_score = calculate_fid_given_paths(paths, BATCH_SIZE, device, dims=192)
+        print("Dimension {:d} works! fid score: {}".format(192, fid_score, gen_data_dir))
+    except:
+        print("Dimension {:d} fails!".format(192))
         
-    fid_score_average = fid_score_average / len(gen_data_dir_list)
-    print("Average fid score: {}".format(fid_score_average))
+    print("Average fid score: {}".format(fid_score))
