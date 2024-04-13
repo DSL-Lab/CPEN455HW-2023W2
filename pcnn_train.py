@@ -149,7 +149,7 @@ if __name__ == '__main__':
             raise Exception('{} dataset not in {cifar10, cifar100}'.format(args.dataset))
     
     elif "cpen455" in args.dataset:
-        ds_transforms = transforms.Compose([rescaling])
+        ds_transforms = transforms.Compose([transforms.Resize((32, 32)), rescaling])
         train_loader = torch.utils.data.DataLoader(CPEN455Dataset(root_dir=args.data_dir, 
                                                                   mode = 'train', 
                                                                   transform=ds_transforms), 
