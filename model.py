@@ -115,12 +115,12 @@ class PixelCNN(nn.Module):
         if labels != None:
             if not torch.is_tensor(labels):
                 labels = torch.tensor(labels)
-            label_embeddings = self.embeddings(labels).to(x.device)
-            label_embeddingsMiddle = self.embeddingsMiddle(labels).to(x.device)
+            label_embeddings = self.embeddings(labels.to(x.device)).to(x.device)
+            label_embeddingsMiddle = self.embeddingsMiddle(labels.to(x.device)).to(x.device)
         else:
             labels = self.predict(x, sample).to(x.device)
-            label_embeddings = self.embeddings(labels).to(x.device)
-            label_embeddingsMiddle = self.embeddingsMiddle(labels).to(x.device)
+            label_embeddings = self.embeddings(labels.to(x.device)).to(x.device)
+            label_embeddingsMiddle = self.embeddingsMiddle(labels.to(x.device)).to(x.device)
 
         
         ###      UP PASS    ###
