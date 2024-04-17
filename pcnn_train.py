@@ -241,7 +241,9 @@ if __name__ == '__main__':
                 print("Dimension {:d} works! fid score: {}".format(192, fid_score))
             except:
                 print("Dimension {:d} fails!".format(192)) 
-
+           
+            acc = classifier(model, val_loader, device)
+            print("Accuracy: ", acc)
             if args.en_wandb:
                 wandb.log({"samples": sample_result,
                             "FID": fid_score})

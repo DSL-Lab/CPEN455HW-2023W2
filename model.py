@@ -59,6 +59,7 @@ class PixelCNN(nn.Module):
             raise Exception('right now only concat elu is supported as resnet nonlinearity.')
         self.NUM_CLASSES = 4
         self.embeddings = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters)
+        self.embeddingsMiddle = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters)
 
         self.nr_filters = nr_filters
         self.input_channels = input_channels
@@ -112,11 +113,16 @@ class PixelCNN(nn.Module):
             x = torch.cat((x, padding), 1)
 
         if labels != None:
-            label_embeddings = self.embeddings(torch.tensor(labels).to(x.device))
+            if not torch.is_tensor(labels):
+                labels = torch.tensor(labels)
+            label_embeddings = self.embeddings(labels).to(x.device)
+            label_embeddingsMiddle = self.embeddingsMiddle(labels).to(x.device)
         else:
             labels = self.predict(x, sample).to(x.device)
             label_embeddings = self.embeddings(labels).to(x.device)
+            label_embeddingsMiddle = self.embeddingsMiddle(labels).to(x.device)
 
+        
         ###      UP PASS    ###
         x = x if sample else torch.cat((x, self.init_padding), 1)
         u_list  = [self.u_init(x)]
@@ -131,6 +137,11 @@ class PixelCNN(nn.Module):
                 # downscale (only twice)
                 u_list  += [self.downsize_u_stream[i](u_list[-1])]
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
+
+        label_embeddingsMiddle = label_embeddingsMiddle.unsqueeze(-1).unsqueeze(-1)
+        label_embeddingsMiddle = label_embeddingsMiddle.repeat(1, 1, u_list[-1].shape[2], u_list[-1].shape[3])
+        u_list[-1] += label_embeddingsMiddle
+        ul_list[-1] += label_embeddingsMiddle
 
         ###    DOWN PASS    ###
         u  = u_list.pop()
