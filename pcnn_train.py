@@ -29,7 +29,7 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
         
         indices = torch.tensor([my_bidict[label] for label in labels]).to(device) if mode == 'training' else None
         model_input = model_input.to(device)
-        model_output = model(model_input, labels=indices)
+        model_output = model(model_input, labels=indices).to(device)
         loss = loss_op(model_input, model_output)
         loss_tracker.update(loss.item()/deno)
         if mode == 'training':
