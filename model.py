@@ -115,7 +115,7 @@ class PixelCNN(nn.Module):
             label_embeddings = self.embeddings(torch.tensor(labels).to(x.device))
         else:
             labels = self.predict(x, sample)
-            label_embeddings = self.embeddings(labels)
+            label_embeddings = self.embeddings(labels).to(x.device)
 
         ###      UP PASS    ###
         x = x if sample else torch.cat((x, self.init_padding), 1)
