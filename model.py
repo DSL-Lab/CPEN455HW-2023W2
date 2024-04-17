@@ -114,7 +114,7 @@ class PixelCNN(nn.Module):
         if labels != None:
             label_embeddings = self.embeddings(torch.tensor(labels).to(x.device))
         else:
-            labels = self.predict(x, sample)
+            labels = self.predict(x, sample).to(x.device)
             label_embeddings = self.embeddings(labels).to(x.device)
 
         ###      UP PASS    ###
