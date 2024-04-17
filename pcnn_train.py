@@ -14,8 +14,7 @@ from pprint import pprint
 import argparse
 from pytorch_fid.fid_score import calculate_fid_given_paths
 
-torch.cuda.empty_cache()
-print(torch.cuda.memory_summary(device=None, abbreviated=False))
+
 
 def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, mode = 'training'):
     if mode == 'training':
@@ -42,6 +41,8 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
     if args.en_wandb:
         wandb.log({mode + "-Average-BPD" : loss_tracker.get_mean()})
         wandb.log({mode + "-epoch": epoch})
+        acc = classifier(model, val_loader, device)
+        wandb.log({"Accuracy": acc})
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -240,12 +241,7 @@ if __name__ == '__main__':
                 print("Dimension {:d} works! fid score: {}".format(192, fid_score))
             except:
                 print("Dimension {:d} fails!".format(192)) 
-            classify = True
-            if classify:
-                acc = classifier(model, val_loader, device)
-                print("Accuracy: ", acc)
-                if args.en_wandb:
-                    wandb.log({"Accuracy": acc})
+
             if args.en_wandb:
                 wandb.log({"samples": sample_result,
                             "FID": fid_score})
