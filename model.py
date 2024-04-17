@@ -27,7 +27,6 @@ class PixelCNNLayer_up(nn.Module):
 
         return u_list, ul_list
 
-
 class PixelCNNLayer_down(nn.Module):
     def __init__(self, nr_resnet, nr_filters, resnet_nonlinearity):
         super(PixelCNNLayer_down, self).__init__()
@@ -58,6 +57,8 @@ class PixelCNN(nn.Module):
             self.resnet_nonlinearity = lambda x : concat_elu(x)
         else :
             raise Exception('right now only concat elu is supported as resnet nonlinearity.')
+        self.NUM_CLASSES = 4
+        self.embeddings = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters)
 
         self.nr_filters = nr_filters
         self.input_channels = input_channels
@@ -97,7 +98,7 @@ class PixelCNN(nn.Module):
         self.init_padding = None
 
 
-    def forward(self, x, sample=False):
+    def forward(self, x, labels=None, sample=False):
         # similar as done in the tf repo :
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
@@ -109,6 +110,12 @@ class PixelCNN(nn.Module):
             padding = Variable(torch.ones(xs[0], 1, xs[2], xs[3]), requires_grad=False)
             padding = padding.cuda() if x.is_cuda else padding
             x = torch.cat((x, padding), 1)
+
+        if labels != None:
+            label_embeddings = self.embeddings(torch.tensor(labels).to(x.device))
+        else:
+            labels = self.predict(x, sample)
+            label_embeddings = self.embeddings(labels)
 
         ###      UP PASS    ###
         x = x if sample else torch.cat((x, self.init_padding), 1)
@@ -138,12 +145,22 @@ class PixelCNN(nn.Module):
                 u  = self.upsize_u_stream[i](u)
                 ul = self.upsize_ul_stream[i](ul)
 
+        #reshape the label embeddings
+        label_embeddings = label_embeddings.view(label_embeddings.shape[0], label_embeddings.shape[1], 1, 1).repeat(1, 1, x.shape[2], x.shape[3])
+        ul = label_embeddings + ul
         x_out = self.nin_out(F.elu(ul))
 
         assert len(u_list) == len(ul_list) == 0, pdb.set_trace()
 
         return x_out
     
+    def predict(self, x, sample=False):
+        losses = torch.zeros(x.shape[0], self.NUM_CLASSES)
+        for i in range(self.NUM_CLASSES):
+                logits =  self.forward(x, labels=[i]*x.shape[0], sample=sample)
+                loss = discretized_mix_logistic_loss_batch(x,logits)
+                losses[:, i] = loss
+        return torch.argmin(losses, dim=1)
     
 class random_classifier(nn.Module):
     def __init__(self, NUM_CLASSES):
@@ -157,5 +174,4 @@ class random_classifier(nn.Module):
         torch.save(self.state_dict(), 'models/conditional_pixelcnn.pth')
     def forward(self, x, device):
         return torch.randint(0, self.NUM_CLASSES, (x.shape[0],)).to(device)
-    
     

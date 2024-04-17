@@ -1,0 +1,84 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python PCNN_TRAIN_testing",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/pcnn_train.py",
+            "args": [
+              "--batch_size", "16",
+              "--sample_batch_size", "8", 
+              "--sampling_interval", "1", 
+              "--save_interval", "1", 
+              "--dataset", "cpen455" ,
+              "--nr_resnet", "1", 
+              "--nr_filters", "3", 
+              "--nr_logistic_mix", "3", 
+              "--lr_decay", "0.999995",
+              "--max_epochs", "3",
+            //   "--en_wandb", "True" 
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python PCNN_TRAIN_cpu_training",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/pcnn_train.py",
+            "args": [
+              "--batch_size", "16",
+              "--sample_batch_size", "16", 
+              "--sampling_interval", "5", 
+              "--save_interval", "5", 
+              "--dataset", "cpen455" ,
+              "--nr_resnet", "1", 
+              "--nr_filters", "40", 
+              "--nr_logistic_mix", "5", 
+              "--lr_decay", "0.999995",
+              "--max_epochs", "500",
+              "--en_wandb", "True" ,
+              "--load_params", "models/pcnn_cpen455_from_scratch_189.pth"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python PCNN_TRAIN_gpu_training",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/pcnn_train.py",
+            "args": [
+              "--batch_size", "16",
+              "--sample_batch_size", "16", 
+              "--sampling_interval", "5", 
+              "--save_interval", "5", 
+              "--dataset", "cpen455" ,
+              "--nr_resnet", "2", 
+              "--nr_filters", "40", 
+              "--nr_logistic_mix", "5", 
+              "--lr_decay", "0.999995",
+              "--max_epochs", "500",
+              "--en_wandb", "True" ,
+              "--load_params", "models/pcnn_cpen455_from_scratch_189.pth"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python Eval Classifier",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/classification_evaluation.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python Eval Generator",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/generation_evaluation.py",
+            "console": "integratedTerminal"
+        }
+    ]
+}

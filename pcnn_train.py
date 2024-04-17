@@ -5,6 +5,7 @@ import torch.optim as optim
 from torch.optim import lr_scheduler
 from torchvision import datasets, transforms
 import wandb
+from classification_evaluation import classifier
 from utils import *
 from model import * 
 from dataset import *
@@ -24,9 +25,11 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
     loss_tracker = mean_tracker()
     
     for batch_idx, item in enumerate(tqdm(data_loader)):
-        model_input, _ = item
+        model_input, labels = item
+        
+        indices = torch.tensor([my_bidict[label] for label in labels]) if mode == 'training' else None
         model_input = model_input.to(device)
-        model_output = model(model_input)
+        model_output = model(model_input, labels=indices)
         loss = loss_op(model_input, model_output)
         loss_tracker.update(loss.item()/deno)
         if mode == 'training':
@@ -84,7 +87,7 @@ if __name__ == '__main__':
                         default=5000, help='How many epochs to run in total?')
     parser.add_argument('-s', '--seed', type=int, default=1,
                         help='Random seed to use')
-    
+    print(parser._get_args)
     args = parser.parse_args()
     pprint(args.__dict__)
     check_dir_and_create(args.save_dir)
@@ -119,7 +122,7 @@ if __name__ == '__main__':
 
     #set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    kwargs = {'num_workers':1, 'pin_memory':True, 'drop_last':True}
+    kwargs = {'num_workers':0, 'pin_memory':True, 'drop_last':True}
 
     # set data
     if "mnist" in args.dataset:
@@ -181,6 +184,7 @@ if __name__ == '__main__':
                 input_channels=input_channels, nr_logistic_mix=args.nr_logistic_mix)
     model = model.to(device)
 
+
     if args.load_params:
         model.load_state_dict(torch.load(args.load_params))
         print('model parameters loaded')
@@ -220,9 +224,14 @@ if __name__ == '__main__':
         
         if epoch % args.sampling_interval == 0:
             print('......sampling......')
-            sample_t = sample(model, args.sample_batch_size, args.obs, sample_op)
-            sample_t = rescaling_inv(sample_t)
-            save_images(sample_t, args.sample_dir)
+            for label in my_bidict:
+                print(f"Label: {label}")
+                sample_t = sample(model, args.sample_batch_size, args.obs, sample_op, labels=my_bidict[label]*torch.ones(args.sample_batch_size).long().to(device))
+                sample_t = rescaling_inv(sample_t)
+            #     save_images(sample_t, args.sample_dir, label=label)
+            # sample_t = sample(model, args.sample_batch_size, args.obs, sample_op)
+            # sample_t = rescaling_inv(sample_t)
+            # save_images(sample_t, args.sample_dir)
             sample_result = wandb.Image(sample_t, caption="epoch {}".format(epoch))
             
             gen_data_dir = args.sample_dir
@@ -232,13 +241,21 @@ if __name__ == '__main__':
                 fid_score = calculate_fid_given_paths(paths, 32, device, dims=192)
                 print("Dimension {:d} works! fid score: {}".format(192, fid_score))
             except:
-                print("Dimension {:d} fails!".format(192))
-                
+                print("Dimension {:d} fails!".format(192)) 
+            classify = True
+            if classify:
+                acc = classifier(model, val_loader, device)
+                print("Accuracy: ", acc)
+                if args.en_wandb:
+                    wandb.log({"Accuracy": acc})
             if args.en_wandb:
                 wandb.log({"samples": sample_result,
                             "FID": fid_score})
+            
         
         if (epoch + 1) % args.save_interval == 0: 
             if not os.path.exists("models"):
                 os.makedirs("models")
             torch.save(model.state_dict(), 'models/{}_{}.pth'.format(model_name, epoch))
+            torch.save(model.state_dict(), 'models/{}.pth'.format("conditional_pixelcnn"))
+

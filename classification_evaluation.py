@@ -19,7 +19,7 @@ NUM_CLASSES = len(my_bidict)
 # And get the predicted label, which is a tensor of shape (batch_size,)
 # Begin of your code
 def get_label(model, model_input, device):
-    answer = model(model_input, device)
+    answer = model.predict(model_input).to(device)
     return answer
 # End of your code
 
@@ -64,13 +64,15 @@ if __name__ == '__main__':
     #Write your code here
     #You should replace the random classifier with your trained model
     #Begin of your code
-    model = random_classifier(NUM_CLASSES)
+    # model = random_classifier(NUM_CLASSES)
+    model = PixelCNN(nr_resnet=1, nr_filters=40, input_channels=3, nr_logistic_mix=5)
     #End of your code
     
     model = model.to(device)
     #Attention: the path of the model is fixed to 'models/conditional_pixelcnn.pth'
     #You should save your model to this path
     model.load_state_dict(torch.load('models/conditional_pixelcnn.pth'))
+  
     model.eval()
     print('model parameters loaded')
     acc = classifier(model = model, data_loader = dataloader, device = device)
