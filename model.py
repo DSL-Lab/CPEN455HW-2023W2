@@ -58,11 +58,11 @@ class PixelCNN(nn.Module):
         else :
             raise Exception('right now only concat elu is supported as resnet nonlinearity.')
         self.NUM_CLASSES = 4
-        self.embeddingsEnd = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters) #end embeddeing
+        # self.embeddingsEnd = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters) #end embeddeing
         self.embeddingsMiddleU = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters) #middle embedding
         self.embeddingsMiddleUL = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters) #begining embedding
-        self.embeddingsBeginingU = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters) #begining embedding
-        self.embeddingsBeginingUL = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters) #begining embedding
+        # self.embeddingsBeginingU = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters) #begining embedding
+        # self.embeddingsBeginingUL = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters) #begining embedding
 
         self.nr_filters = nr_filters
         self.input_channels = input_channels
@@ -120,11 +120,11 @@ class PixelCNN(nn.Module):
 
         if not torch.is_tensor(labels):
             labels = torch.tensor(labels)
-        label_embeddingsEnd = self.embeddingsEnd(labels.to(x.device)).to(x.device)
+        # label_embeddingsEnd = self.embeddingsEnd(labels.to(x.device)).to(x.device)
         label_embeddingsMiddleU = self.embeddingsMiddleU(labels.to(x.device)).to(x.device)
         label_embeddingsMiddleUL = self.embeddingsMiddleUL(labels.to(x.device)).to(x.device)
-        label_embeddingsBeginingU = self.embeddingsBeginingU(labels.to(x.device)).to(x.device)
-        label_embeddingsBeginingUL = self.embeddingsBeginingUL(labels.to(x.device)).to(x.device)
+        # label_embeddingsBeginingU = self.embeddingsBeginingU(labels.to(x.device)).to(x.device)
+        # label_embeddingsBeginingUL = self.embeddingsBeginingUL(labels.to(x.device)).to(x.device)
 
         
         ###      UP PASS    ###
@@ -132,8 +132,8 @@ class PixelCNN(nn.Module):
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
 
-        u_list[-1] += label_embeddingsBeginingU.view(label_embeddingsBeginingU.shape[0], label_embeddingsBeginingU.shape[1], 1, 1).repeat(1, 1, u_list[-1].shape[2], u_list[-1].shape[3])
-        ul_list[-1] += label_embeddingsBeginingUL.view(label_embeddingsBeginingUL.shape[0], label_embeddingsBeginingUL.shape[1], 1, 1).repeat(1, 1, ul_list[-1].shape[2], ul_list[-1].shape[3])
+        # u_list[-1] += label_embeddingsBeginingU.view(label_embeddingsBeginingU.shape[0], label_embeddingsBeginingU.shape[1], 1, 1).repeat(1, 1, u_list[-1].shape[2], u_list[-1].shape[3])
+        # ul_list[-1] += label_embeddingsBeginingUL.view(label_embeddingsBeginingUL.shape[0], label_embeddingsBeginingUL.shape[1], 1, 1).repeat(1, 1, ul_list[-1].shape[2], ul_list[-1].shape[3])
 
         for i in range(3):
             # resnet block
@@ -168,8 +168,8 @@ class PixelCNN(nn.Module):
                 ul = self.upsize_ul_stream[i](ul)
 
         #reshape the label embeddings
-        label_embeddingsEnd = label_embeddingsEnd.view(label_embeddingsEnd.shape[0], label_embeddingsEnd.shape[1], 1, 1).repeat(1, 1, x.shape[2], x.shape[3])
-        ul = label_embeddingsEnd + ul
+        # label_embeddingsEnd = label_embeddingsEnd.view(label_embeddingsEnd.shape[0], label_embeddingsEnd.shape[1], 1, 1).repeat(1, 1, x.shape[2], x.shape[3])
+        # ul = label_embeddingsEnd + ul
         x_out = self.nin_out(F.elu(ul))
 
         assert len(u_list) == len(ul_list) == 0, pdb.set_trace()
