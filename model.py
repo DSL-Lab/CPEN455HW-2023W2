@@ -58,8 +58,11 @@ class PixelCNN(nn.Module):
         else :
             raise Exception('right now only concat elu is supported as resnet nonlinearity.')
         self.NUM_CLASSES = 4
-        self.embeddings = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters)
-        self.embeddingsMiddle = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters)
+        self.embeddingsEnd = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters) #end embeddeing
+        self.embeddingsMiddleU = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters) #middle embedding
+        self.embeddingsMiddleUL = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters) #begining embedding
+        self.embeddingsBeginingU = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters) #begining embedding
+        self.embeddingsBeginingUL = nn.Embedding(num_embeddings=self.NUM_CLASSES, embedding_dim=nr_filters) #begining embedding
 
         self.nr_filters = nr_filters
         self.input_channels = input_channels
@@ -100,6 +103,9 @@ class PixelCNN(nn.Module):
 
 
     def forward(self, x, labels=None, sample=False):
+        if labels == None:
+            labels = self.predict(x, sample).to(x.device)
+
         # similar as done in the tf repo :
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
@@ -112,21 +118,23 @@ class PixelCNN(nn.Module):
             padding = padding.cuda() if x.is_cuda else padding
             x = torch.cat((x, padding), 1)
 
-        if labels != None:
-            if not torch.is_tensor(labels):
-                labels = torch.tensor(labels)
-            label_embeddings = self.embeddings(labels.to(x.device)).to(x.device)
-            label_embeddingsMiddle = self.embeddingsMiddle(labels.to(x.device)).to(x.device)
-        else:
-            labels = self.predict(x, sample).to(x.device)
-            label_embeddings = self.embeddings(labels.to(x.device)).to(x.device)
-            label_embeddingsMiddle = self.embeddingsMiddle(labels.to(x.device)).to(x.device)
+        if not torch.is_tensor(labels):
+            labels = torch.tensor(labels)
+        label_embeddingsEnd = self.embeddingsEnd(labels.to(x.device)).to(x.device)
+        label_embeddingsMiddleU = self.embeddingsMiddleU(labels.to(x.device)).to(x.device)
+        label_embeddingsMiddleUL = self.embeddingsMiddleUL(labels.to(x.device)).to(x.device)
+        label_embeddingsBeginingU = self.embeddingsBeginingU(labels.to(x.device)).to(x.device)
+        label_embeddingsBeginingUL = self.embeddingsBeginingUL(labels.to(x.device)).to(x.device)
 
         
         ###      UP PASS    ###
         x = x if sample else torch.cat((x, self.init_padding), 1)
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
+
+        u_list[-1] += label_embeddingsBeginingU.view(label_embeddingsBeginingU.shape[0], label_embeddingsBeginingU.shape[1], 1, 1).repeat(1, 1, u_list[-1].shape[2], u_list[-1].shape[3])
+        ul_list[-1] += label_embeddingsBeginingUL.view(label_embeddingsBeginingUL.shape[0], label_embeddingsBeginingUL.shape[1], 1, 1).repeat(1, 1, ul_list[-1].shape[2], ul_list[-1].shape[3])
+
         for i in range(3):
             # resnet block
             u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1])
@@ -138,10 +146,13 @@ class PixelCNN(nn.Module):
                 u_list  += [self.downsize_u_stream[i](u_list[-1])]
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
 
-        label_embeddingsMiddle = label_embeddingsMiddle.unsqueeze(-1).unsqueeze(-1)
-        label_embeddingsMiddle = label_embeddingsMiddle.repeat(1, 1, u_list[-1].shape[2], u_list[-1].shape[3])
-        u_list[-1] += label_embeddingsMiddle
-        ul_list[-1] += label_embeddingsMiddle
+        label_embeddingsMiddleU = label_embeddingsMiddleU.unsqueeze(-1).unsqueeze(-1)
+        label_embeddingsMiddleU = label_embeddingsMiddleU.repeat(1, 1, u_list[-1].shape[2], u_list[-1].shape[3])
+        
+        label_embeddingsMiddleUL = label_embeddingsMiddleUL.unsqueeze(-1).unsqueeze(-1)
+        label_embeddingsMiddleUL = label_embeddingsMiddleUL.repeat(1, 1, u_list[-1].shape[2], u_list[-1].shape[3])
+        u_list[-1] += label_embeddingsMiddleU
+        ul_list[-1] += label_embeddingsMiddleUL
 
         ###    DOWN PASS    ###
         u  = u_list.pop()
@@ -157,8 +168,8 @@ class PixelCNN(nn.Module):
                 ul = self.upsize_ul_stream[i](ul)
 
         #reshape the label embeddings
-        label_embeddings = label_embeddings.view(label_embeddings.shape[0], label_embeddings.shape[1], 1, 1).repeat(1, 1, x.shape[2], x.shape[3])
-        ul = label_embeddings + ul
+        label_embeddingsEnd = label_embeddingsEnd.view(label_embeddingsEnd.shape[0], label_embeddingsEnd.shape[1], 1, 1).repeat(1, 1, x.shape[2], x.shape[3])
+        ul = label_embeddingsEnd + ul
         x_out = self.nin_out(F.elu(ul))
 
         assert len(u_list) == len(ul_list) == 0, pdb.set_trace()
@@ -166,12 +177,13 @@ class PixelCNN(nn.Module):
         return x_out
     
     def predict(self, x, sample=False):
-        losses = torch.zeros(x.shape[0], self.NUM_CLASSES)
-        for i in range(self.NUM_CLASSES):
-                logits =  self.forward(x, labels=[i]*x.shape[0], sample=sample)
-                loss = discretized_mix_logistic_loss_batch(x,logits)
-                losses[:, i] = loss
+        x_new = x.repeat(self.NUM_CLASSES, 1, 1, 1)
+        labels = torch.arange(self.NUM_CLASSES).repeat_interleave(x.shape[0])
+        losses = self.forward(x_new, labels=labels, sample=sample)
+        losses = discretized_mix_logistic_loss_batch(x_new, losses)
+        losses = losses.view(self.NUM_CLASSES, -1).permute(1, 0)
         return torch.argmin(losses, dim=1)
+    
     
 class random_classifier(nn.Module):
     def __init__(self, NUM_CLASSES):
