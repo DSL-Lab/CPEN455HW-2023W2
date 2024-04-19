@@ -3,7 +3,7 @@ import torch
 import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torchvision.io import read_image
-from torchvision.transforms import Compose, Resize
+from torchvision.transforms import Compose, Resize, RandomRotation, ColorJitter, RandomHorizontalFlip, RandomVerticalFlip
 from bidict import bidict
 from tqdm import tqdm
 import pandas as pd
@@ -72,11 +72,26 @@ if __name__ == '__main__':
         Resize((32, 32)),  # Resize images to 32 * 32
         rescaling
     ])
+
+    # Transformations for the training set
+    train_transform = Compose([
+        Resize((32, 32)),  # Resize images to 32 * 32
+        RandomRotation(10),  # Randomly rotate the image by 10 degrees
+        ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1),  # Randomly change the brightness, contrast, saturation, and hue of the image
+        RandomHorizontalFlip(),  # Randomly flip the image horizontally
+        RandomVerticalFlip(),  # Randomly flip the image vertically
+        rescaling  # Normalize to [0, 1]
+    ])
+
+
     dataset_list = ['train', 'validation', 'test']
     
     for mode in dataset_list:
         print(f"Mode: {mode}")
-        dataset = CPEN455Dataset(root_dir='./data', transform=transform_32, mode=mode)
+        if mode == 'train':
+            dataset = CPEN455Dataset(root_dir='./data', transform=train_transform, mode=mode)
+        else:
+            dataset = CPEN455Dataset(root_dir='./data', transform=transform_32, mode=mode)
         data_loader = DataLoader(dataset, batch_size = 4, shuffle=True)
         # Sample from the DataLoader
         for images, categories in tqdm(data_loader):
